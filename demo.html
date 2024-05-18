@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WakeLock API Demo</title>
+</head>
+
+<body>
+    <button id="toggleWakeLock">Toggle wake lock</button>
+    <p id="wakeLockStatus">Not requested</p>
+
+    <script>
+        let wakeLock = null;
+
+        // Function that attempts to request a screen wake lock.
+        const requestWakeLock = async () => {
+            try {
+
+                wakeLock = await navigator.wakeLock.request('screen');
+                // This event will fire once the wake lock is released.
+                wakeLock.addEventListener('release', () => {
+                    console.log('Screen Wake Lock released:', wakeLock.released);
+                    document.getElementById('wakeLockStatus').textContent = 'Released';
+                });
+                
+                console.log('Screen Wake Lock released:', wakeLock.released);
+                document.getElementById('wakeLockStatus').textContent = 'Active';
+
+            } catch (err) {
+                console.error(`${err.name}, ${err.message}`);
+            }
+        };
+
+        document.getElementById('toggleWakeLock').addEventListener('click', () => {
+            if (wakeLock !== null) {
+                wakeLock.release();
+                wakeLock = null;
+            } else {
+                requestWakeLock();
+            }
+        });
+    </script>
+</body>
+
+</html>
